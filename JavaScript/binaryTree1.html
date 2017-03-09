@@ -11,12 +11,14 @@
             border: 1px solid black;
             background: white;
         }
+
         .root {
             width: 100%;
             height: 100%;
             display: flex;
             display: -webkit-flex;
         }
+
         .two,
         .three,
         .four {
@@ -24,9 +26,11 @@
             -webkit-flex: 1;
             margin: 20px;
         }
+
         .four {
             height: 20px;
         }
+
         button {
             margin: 20px;
             padding: 15px;
@@ -63,111 +67,149 @@
 <button onclick="postBt()">后序遍历</button>
 
 <script>
-  let tree = {
-    value: 'A',
-    left: {
-      value: 'B',
-      left: {
-        value: 'D',
-        left: {
-          value: 'H',
-        },
-        right: {
-          value: 'I',
-        }
-      },
-      right: {
-        value: 'E',
-        left: {
-          value: 'J',
-        },
-        right: {
-          value: 'K',
-        }
-      }
-    },
-    right: {
-      value: 'C',
-      left: {
-        value: 'F',
-        left: {
-          value: 'L',
-        },
-        right: {
-          value: 'M',
-        }
-      },
-      right: {
-        value: 'G',
-        left: {
-          value: 'N',
-        },
-        right: {
-          value: 'O',
-        }
-      }
-    }
-  };
-    //  创建空数组储存按不同顺序排列的id值
-    let preList = [],
-      inList = [],
-      postList = [];
+  //  let tree = {
+  //    value: 'A',
+  //    left: {
+  //      value: 'B',
+  //      left: {
+  //        value: 'D',
+  //        left: {
+  //          value: 'H',
+  //        },
+  //        right: {
+  //          value: 'I',
+  //        }
+  //      },
+  //      right: {
+  //        value: 'E',
+  //        left: {
+  //          value: 'J',
+  //        },
+  //        right: {
+  //          value: 'K',
+  //        }
+  //      }
+  //    },
+  //    right: {
+  //      value: 'C',
+  //      left: {
+  //        value: 'F',
+  //        left: {
+  //          value: 'L',
+  //        },
+  //        right: {
+  //          value: 'M',
+  //        }
+  //      },
+  //      right: {
+  //        value: 'G',
+  //        left: {
+  //          value: 'N',
+  //        },
+  //        right: {
+  //          value: 'O',
+  //        }
+  //      }
+  //    }
+  //  };
 
-    function preOrder(node) {
-      if (node) {
-        preList.push(node.value);
-        preOrder(node.left);
-        preOrder(node.right);
-      }
-    }
-    
-    function inOrder(node) {
-      if (node) {
-        inOrder(node.left);
-        inList.push(node.value);
-        inOrder(node.right);
-      }
-    }
 
-    function postOrder(node) {
-      if (node) {
-        postOrder(node.left);
-        postOrder(node.right);
-        postList.push(node.value);
-      }
+
+  //  各个节点的值
+  let characters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O'];
+
+  //  节点对象
+  function Node() {
+    this.value = '';
+    this.leftChild = null;
+    this.rightChild = null;
+  }
+
+  // 递归创建二叉树对象
+  function build(node, i) {
+    let leftIndex = 2 * i + 1,    //  left child index value
+      rightIndex = 2 * i + 2;     // right child index value
+
+    if (leftIndex < characters.length) {
+      let childNode = new Node();    // new 一个Node对象
+      childNode.value = characters[leftIndex];   // 为Node对象赋值
+      node.leftChild = childNode;                // 父节点的左孩子为当前子节点
+      build(childNode, leftIndex);               // 递归，左孩子作为父节点继续遍历
     }
 
-    // 思路
-    // 先通过递归遍历把value push 到各自的数组中，再把数组中的id值用for循环拿出来加上定时函数做出动画效果
-    // 避免在处理递归的同时处理setTimeout函数，容易出错
-    function changeBg(list) {
-      for (let i = 0; i < list.length; i++) {
-        let div = document.getElementById(list[i]);
-        setTimeout(function () {
-          console.log(i + ':' + list[i]);
-          div.style.background = "red";
-        }, 500*i);
-        setTimeout(function () {
-          div.style.background = "white";
-        }, 500*(i+1));
-      }
+    if (rightIndex < characters.length) {
+      let childNode = new Node();
+      childNode.value = characters[rightIndex];
+      node.rightChild = childNode;
+      build(childNode, rightIndex);
+    }
+  }
 
+  //  创建二叉树对象
+  let tree = new Node();
+  tree.value = characters[0];  //  把数组的第一个值赋给根节点
+  build(tree, 0);
+
+  //  创建空数组储存按不同顺序排列的id值
+  let preList = [],
+    inList = [],
+    postList = [];
+
+  function preOrder(node) {
+    if (node) {
+      preList.push(node.value);
+      preOrder(node.leftChild);
+      preOrder(node.rightChild);
+    }
+  }
+
+  function inOrder(node) {
+    if (node) {
+      inOrder(node.leftChild);
+      inList.push(node.value);
+      inOrder(node.rightChild);
+    }
+  }
+
+  function postOrder(node) {
+    if (node) {
+      postOrder(node.leftChild);
+      postOrder(node.rightChild);
+      postList.push(node.value);
+    }
+  }
+
+  // 思路
+  // 先通过递归遍历把value push 到各自的数组中，再把数组中的id值用for循环拿出来加上定时函数做出动画效果
+  // 避免在处理递归的同时处理setTimeout函数，容易出错
+  function changeBg(list) {
+    for (let i = 0; i < list.length; i++) {
+      let div = document.getElementById(list[i]);
+      setTimeout(function () {
+        console.log(i + ':' + list[i]);
+        div.style.background = "red";
+      }, 500 * i);
+      setTimeout(function () {
+        div.style.background = "white";
+      }, 500 * (i + 1));
     }
 
-    function preBt() {
-      preOrder(tree);
-      changeBg(preList);
-    }
+  }
 
-    function inBt() {
-      inOrder(tree);
-      changeBg(inList);
-    }
+  function preBt() {
+    preOrder(tree);
+    changeBg(preList);
+  }
 
-    function postBt() {
-      postOrder(tree);
-      changeBg(postList);
-    }
+  function inBt() {
+    inOrder(tree);
+    changeBg(inList);
+  }
+
+  function postBt() {
+    postOrder(tree);
+    changeBg(postList);
+  }
 </script>
 </body>
 </html>
