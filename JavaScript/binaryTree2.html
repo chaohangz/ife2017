@@ -12,6 +12,7 @@
             background: white;
             margin: 10px;
         }
+
         #super {
             width: 100%;
             height: 100%;
@@ -19,12 +20,15 @@
             display: -webkit-flex;
             margin: 0;
         }
-        #fruit{
+
+        #fruit {
             flex: 3;
         }
+
         #note {
             flex: 3;
         }
+
         #fish {
             flex: 1;
         }
@@ -74,39 +78,232 @@
     <div id="fish">fish</div>
 </div>
 
+<button onclick="preBt()">前序遍历</button>
+<button onclick="postBt()">后序遍历</button>
+
+<input type="text" id="input" />
+<button onclick="search(preList)">前序查找</button>
+<button onclick="search(postList)">后序查找</button>
+
+<button onclick="recovery()">还原</button>
+
 <script>
-let characters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'];
+    // 创建一个简单的多叉树
+    let tree = [
+      {
+        id: 0,
+        value: 'super',
+        child: [
+          {
+            id: 1,
+            value: 'fruit',
+            child: [
+              {
+                id: 11,
+                value: 'apple',
+                child: [
+                  {
+                    id: 111,
+                    value: 'pear',
+                    child: []
+                  },
+                  {
+                    id: 112,
+                    value: 'pig',
+                    child: []
+                  },
+                  {
+                    id: 113,
+                    value: 'color',
+                    child: []
+                  },
+                  {
+                    id: 114,
+                    value: 'soccor',
+                    child: []
+                  }
+                ]
+              },
+              {
+                id: 12,
+                value: 'phone',
+                child: []
+              },
+              {
+                id: 13,
+                value: 'study',
+                child: [
+                  {
+                    id: 131,
+                    value: 'book',
+                    child: []
+                  },
+                  {
+                    id: 132,
+                    value: 'school',
+                    child: []
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            id: 2,
+            value: 'note',
+            child: [
+              {
+                id: 21,
+                value: 'human',
+                child: [
+                  {
+                    id: 211,
+                    value: 'code',
+                    child: []
+                  },
+                  {
+                    id: 212,
+                    value: 'operate',
+                    child: []
+                  },
+                  {
+                    id: 213,
+                    value: 'man',
+                    child: []
+                  }
+                ]
+              },
+              {
+                id: 22,
+                value: 'program',
+                child: [
+                  {
+                    id: 221,
+                    value: 'boment',
+                    child: [
+                      {
+                        id: 2211,
+                        value: 'cat',
+                        child: []
+                      }
+                    ]
+                  },
+                  {
+                    id: 222,
+                    value: 'glass',
+                    child: []
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            id: 3,
+            value: 'fish',
+            child: []
+          }
+        ]
+      }
+    ];
 
-function Node() {
-  this.value = '';
-  this.leftChild = null;
-  this.rightChild = null;
-}
+    // 遍历之后的值按顺序储存在数组内
+    let preList = [],
+      postList = [];
 
-// 递归创建二叉树对象
-function build(node, i) {
-  let leftIndex = 2*i+1,    //  left child index value
-    rightIndex = 2*i+2;     // right child index value
+    function preOrder(tree) {
+      if (!tree || !tree.length) return;
 
-  if (leftIndex < characters.length) {
-    let childNode = new Node();
-    childNode.value = characters[leftIndex];
-    node.leftChild = childNode;
-    build(childNode, leftIndex);
-  }
+      for (let i = 0; i < tree.length; i++) {
+        console.log(tree[i].id + ':' + tree[i].value);
+        preList.push(tree[i].value);
+        let child = tree[i].child;
+        if (child && child.length > 0) {
+          preOrder(child);
+        }
+      }
+    }
+    
+    function postOrder(tree) {
+      if (!tree || !tree.length) return;
 
-  if (rightIndex < characters.length) {
-    let childNode = new Node();
-    childNode.value = characters[rightIndex];
-    node.rightChild = childNode;
-    build(childNode, rightIndex);
-  }
-}
+      for (let i = 0; i < tree.length; i++) {
+        let child = tree[i].child;
+        if (child && child.length > 0) {
+          postOrder(child);
+        }
+        console.log(tree[i].id + ':' + tree[i].value);
+        postList.push(tree[i].value);
+      }
+    }
 
-let node = new Node();
-node.value = characters[0];
-build(node, 0);
-console.log(node);
+    function changeBg(list) {
+      for (let i = 0; i < list.length; i++) {
+        let div = document.getElementById(list[i]);
+        setTimeout(function () {
+          console.log(i + ':' + list[i]);
+          div.style.background = "red";
+        }, 500 * i);
+        setTimeout(function () {
+          div.style.background = "white";
+        }, 500 * (i + 1));
+      }
+    }
+
+    // 查询节点
+    function search(list) {
+      // 获取输入的值
+      let inputValue = document.getElementById('input').value;
+
+      if (!inputValue) {
+        alert('输入为空');
+        return;
+      }
+
+      for (let i = 0; i < list.length; i++) {
+        let divId = list[i];
+        let div = document.getElementById(divId);
+
+        if (list[i] === inputValue) {
+          setTimeout(function () {
+            div.style.background = 'red';
+
+          }, 500 * i);
+          return;
+        }
+
+        setTimeout(function () {
+          div.style.background = "red";
+        }, 500 * i);
+        setTimeout(function () {
+          div.style.background = "white";
+        }, 500 * (i + 1));
+      }
+
+      // 不让窗口立即弹出，而是遍历动画结束之后弹出
+      let i = list.length + 1;
+      setTimeout(function () {
+        alert('未查找到节点: ' + inputValue);
+      }, 500 * i);
+    }
+
+    // 复原
+    function recovery() {
+      for (let i = 0; i < preList.length; i++) {
+        let div = document.getElementById(preList[i]);
+        div.style.background = 'white';
+      }
+    }
+
+    function preBt() {
+      changeBg(preList);
+    }
+    function postBt() {
+      changeBg(postList);
+    }
+
+    preOrder(tree);
+    postOrder(tree);
+
+
 </script>
 
 </body>

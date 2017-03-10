@@ -145,8 +145,7 @@
     }
   }
 
-  //  创建二叉树对象
-  let tree = new Node();
+  let tree = new Node();       //  创建根节点
   tree.value = characters[0];  //  把数组的第一个值赋给根节点
   build(tree, 0);
 
@@ -193,7 +192,6 @@
         div.style.background = "white";
       }, 500 * (i + 1));
     }
-
   }
 
   function preBt() {
