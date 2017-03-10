@@ -88,153 +88,39 @@
 <button onclick="recovery()">还原</button>
 
 <script>
-    // 创建一个简单的多叉树
-    let tree = [
-      {
-        id: 0,
-        value: 'super',
-        child: [
-          {
-            id: 1,
-            value: 'fruit',
-            child: [
-              {
-                id: 11,
-                value: 'apple',
-                child: [
-                  {
-                    id: 111,
-                    value: 'pear',
-                    child: []
-                  },
-                  {
-                    id: 112,
-                    value: 'pig',
-                    child: []
-                  },
-                  {
-                    id: 113,
-                    value: 'color',
-                    child: []
-                  },
-                  {
-                    id: 114,
-                    value: 'soccor',
-                    child: []
-                  }
-                ]
-              },
-              {
-                id: 12,
-                value: 'phone',
-                child: []
-              },
-              {
-                id: 13,
-                value: 'study',
-                child: [
-                  {
-                    id: 131,
-                    value: 'book',
-                    child: []
-                  },
-                  {
-                    id: 132,
-                    value: 'school',
-                    child: []
-                  }
-                ]
-              }
-            ]
-          },
-          {
-            id: 2,
-            value: 'note',
-            child: [
-              {
-                id: 21,
-                value: 'human',
-                child: [
-                  {
-                    id: 211,
-                    value: 'code',
-                    child: []
-                  },
-                  {
-                    id: 212,
-                    value: 'operate',
-                    child: []
-                  },
-                  {
-                    id: 213,
-                    value: 'man',
-                    child: []
-                  }
-                ]
-              },
-              {
-                id: 22,
-                value: 'program',
-                child: [
-                  {
-                    id: 221,
-                    value: 'boment',
-                    child: [
-                      {
-                        id: 2211,
-                        value: 'cat',
-                        child: []
-                      }
-                    ]
-                  },
-                  {
-                    id: 222,
-                    value: 'glass',
-                    child: []
-                  }
-                ]
-              }
-            ]
-          },
-          {
-            id: 3,
-            value: 'fish',
-            child: []
-          }
-        ]
-      }
-    ];
 
     // 遍历之后的值按顺序储存在数组内
     let preList = [],
       postList = [];
 
     // 前序遍历
-    function preOrder(tree) {
-      if (!tree || !tree.length) return;
+    function preOrder(node) {
+      if (!node) return;
+      console.log(node.id);
+      preList.push(node.id);
 
-      for (let i = 0; i < tree.length; i++) {
-        console.log(tree[i].id + ':' + tree[i].value);
-        preList.push(tree[i].value);
-        let child = tree[i].child;
-        if (child && child.length > 0) {
-          preOrder(child);
+      // 获取所有子节点
+      let child = node.children;
+      if (child.length) {
+        for (let i = 0; i < child.length; i++) {
+          preOrder(child[i]);
         }
       }
     }
 
     // 后序遍历
-    function postOrder(tree) {
-      if (!tree || !tree.length) return;
+    function postOrder(node) {
+      if (!node) return;
 
-      for (let i = 0; i < tree.length; i++) {
-        let child = tree[i].child;
-        if (child && child.length > 0) {
-          postOrder(child);
+      let child = node.children;
+      if (child.length) {
+        for (let i = 0; i < child.length; i++) {
+          postOrder(child[i]);
         }
-        console.log(tree[i].id + ':' + tree[i].value);
-        postList.push(tree[i].value);
       }
+
+      console.log(node.id);
+      postList.push(node.id);
     }
 
     function changeBg(list) {
@@ -303,9 +189,9 @@
     }
 
     // 加载页面后立刻遍历，存储进数组
-    preOrder(tree);
-    postOrder(tree);
-
+    let root = document.getElementById('super');
+    preOrder(root);
+    postOrder(root);
 
 </script>
 
