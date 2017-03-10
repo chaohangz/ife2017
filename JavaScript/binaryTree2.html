@@ -209,6 +209,7 @@
     let preList = [],
       postList = [];
 
+    // 前序遍历
     function preOrder(tree) {
       if (!tree || !tree.length) return;
 
@@ -221,7 +222,8 @@
         }
       }
     }
-    
+
+    // 后序遍历
     function postOrder(tree) {
       if (!tree || !tree.length) return;
 
@@ -300,6 +302,7 @@
       changeBg(postList);
     }
 
+    // 加载页面后立刻遍历，存储进数组
     preOrder(tree);
     postOrder(tree);
 
