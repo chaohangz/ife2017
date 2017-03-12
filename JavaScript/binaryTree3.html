@@ -1,0 +1,322 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>binary tree</title>
+    <style>
+        div {
+            border: 1px solid black;
+            background: white;
+            margin: 10px;
+        }
+
+        #super {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            display: -webkit-flex;
+            margin: 0;
+        }
+
+        #fruit {
+            flex: 3;
+        }
+
+        #note {
+            flex: 3;
+        }
+
+        #fish {
+            flex: 1;
+        }
+
+        button {
+            margin: 20px;
+            padding: 15px;
+        }
+        #buttonBox {
+            border: 0;
+        }
+    </style>
+</head>
+<body>
+
+<div id="super">
+    super
+    <div id="fruit">
+        fruit
+        <div id="apple">
+            apple
+            <div id="pear">pear</div>
+            <div id="pig">pig</div>
+            <div id="color">color</div>
+            <div id="soccor">soccor</div>
+        </div>
+        <div id="phone">phone</div>
+        <div id="study">
+            <div id="book">book</div>
+            <div id="school">school</div>
+        </div>
+    </div>
+    <div id="note">
+        note
+        <div id="human">
+            human
+            <div id="code">code</div>
+            <div id="operate">operate</div>
+            <div id="man">man</div>
+        </div>
+        <div id="program">
+            program
+            <div id="boment">
+                boment
+                <div id="cat">cat</div>
+            </div>
+            <div id="glass">glass</div>
+        </div>
+    </div>
+    <div id="fish">fish</div>
+</div>
+
+<div id="buttonBox">
+    <button id="pre">前序遍历</button>
+    <button id="post">后序遍历</button>
+
+    <input type="text" id="searchInput" />
+    <button id="preSearch">前序查找</button>
+    <button id="postSearch">后序查找</button>
+    <hr>
+
+    <button id="recovery">还原</button>
+    <button id="delete">删除</button>
+
+    <input type="text" id="addInput" />
+    <button id="add">添加</button>
+</div>
+
+<script>
+
+  let root = document.getElementById('super'),
+    buttonBox = document.getElementById('buttonBox');
+
+  // 遍历之后的值按顺序储存在数组内
+  let preList = [],
+    postList = [];
+
+  // 保存被选中的节点的id，为删除事件做准备
+  let selectedNodeId = '';
+
+  // 前序遍历
+  function preOrder(node) {
+    if (!node) return;
+    preList.push(node.id);
+
+    // 获取所有子节点
+    let child = node.children;
+    if (child.length) {
+      for (let i = 0; i < child.length; i++) {
+        preOrder(child[i]);
+      }
+    }
+  }
+
+  // 后序遍历
+  function postOrder(node) {
+    if (!node) return;
+
+    let child = node.children;
+    if (child.length) {
+      for (let i = 0; i < child.length; i++) {
+        postOrder(child[i]);
+      }
+    }
+
+    postList.push(node.id);
+  }
+
+  function changeBg(list) {
+    for (let i = 0; i < list.length; i++) {
+      let div = document.getElementById(list[i]);
+      setTimeout(function () {
+        div.style.background = "red";
+      }, 500 * i);
+      setTimeout(function () {
+        div.style.background = "white";
+      }, 500 * (i + 1));
+    }
+  }
+
+  // 查询节点
+  function search(list) {
+    // 获取输入的值
+    let inputValue = document.getElementById('searchInput').value;
+
+    if (!inputValue) {
+      alert('输入为空');
+      return;
+    }
+
+    for (let i = 0; i < list.length; i++) {
+      let divId = list[i];
+      let div = document.getElementById(divId);
+
+      if (list[i] === inputValue) {
+        setTimeout(function () {
+          div.style.background = 'red';
+
+        }, 500 * i);
+        return;
+      }
+
+      setTimeout(function () {
+        div.style.background = "red";
+      }, 500 * i);
+      setTimeout(function () {
+        div.style.background = "white";
+      }, 500 * (i + 1));
+    }
+
+    // 不让窗口立即弹出，而是遍历动画结束之后弹出
+    let i = list.length + 1;
+    setTimeout(function () {
+      alert('未查找到节点: ' + inputValue);
+    }, 500 * i);
+  }
+
+  // 复原
+  function recovery() {
+    selectedNodeId = '';
+    for (let i = 0; i < preList.length; i++) {
+      let div = document.getElementById(preList[i]);
+      div.style.background = 'white';
+    }
+  }
+
+  // 被点击的元素显示为红色
+  function selected(event) {
+    let targetId = event.target.id;
+    for (let i = 0; i < preList.length; i++) {
+      let item = preList[i];
+      switch (targetId) {
+        case item:
+          // 复原
+          recovery();
+          // 保存被选中的节点的id值
+          selectedNodeId = item;
+          console.log(item);
+          // 改变被选中的节点颜色
+          event.target.style.background = 'red';
+          break;
+      }
+    }
+  }
+
+  // 删除被选中的节点及子节点
+  function deleteNode() {
+    if (!selectedNodeId) {
+      alert('没有被选中的元素');
+      return false;
+    }
+    // 删除该节点及该节点的子节点
+    let deleteNode = document.getElementById(selectedNodeId);
+    deleteNode.parentNode.removeChild(deleteNode);
+    selectedNodeId = '';
+    // 重新遍历所有节点之前先清空数组
+    preList = [];
+    postList = [];
+    preOrder(root);
+    postOrder(root);
+  }
+  
+  // 添加子节点
+  function addNode() {
+    let inputValue = document.getElementById('addInput').value;
+    if (!inputValue) {
+      alert('请输入节点名称');
+      return;
+    }
+    if (!selectedNodeId) {
+      alert('没有被选中的节点');
+      return;
+    }
+    for (let i = 0; i < preList.length; i++) {
+      if (inputValue === preList[i]) {
+        alert('该节点已存在');
+        return;
+      }
+    }
+
+    // 新建节点
+    let node = document.createElement('div');
+    let textNode = document.createTextNode(inputValue);
+    node.id = inputValue;
+    node.appendChild(textNode);
+    document.getElementById(selectedNodeId).appendChild(node);
+
+    // 重新遍历所有节点
+    preList = [];
+    postList = [];
+    preOrder(root);
+    postOrder(root);
+  }
+
+  // 按钮冒泡
+  function buttoned(event) {
+    let targetId = event.target.id;
+    switch (targetId) {
+      case 'pre':
+        changeBg(preList);
+        break;
+      case 'post':
+        changeBg(postList);
+        break;
+      case 'preSearch':
+        search(preList);
+        break;
+      case 'postSearch':
+        search(postList);
+        break;
+      case 'recovery':
+        recovery();
+        break;
+      case 'delete':
+        deleteNode();
+        break;
+      case 'add':
+        addNode()
+        break;
+      case 'buttonBox':
+        break;
+      default:
+        console.error('button error');
+    }
+  }
+
+  function init() {
+
+    // 加载页面后立刻遍历，存储进数组
+    preOrder(root);
+    postOrder(root);
+
+    // 只绑定click事件在父元素上，子元素利用事件冒泡执行所对应的函数
+    buttonBox.onclick = function (event) {
+      buttoned(event);
+    }
+
+    // 选中效果
+    root.onclick = function (event) {
+      selected(event);
+    };
+  }
+
+  init();
+
+
+
+</script>
+
+</body>
+</html>
